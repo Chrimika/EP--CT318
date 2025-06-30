@@ -6,6 +6,7 @@ import com.example.demo.service.CategoryService;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+ // controllers
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
