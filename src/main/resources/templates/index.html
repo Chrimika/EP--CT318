@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Page d'accueil</title>
+</head>
+<body>
+    <h1>Bienvenue dans l'application de gestion des produits</h1>
+    <p th:text="|Aujourd'hui, nous sommes le ${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}|"></p>
+</body>
+</html>
