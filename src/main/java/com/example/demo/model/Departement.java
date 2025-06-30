@@ -15,15 +15,17 @@ import java.util.UUID;
 public class Departement {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id_departement") // Nom standard pour la colonne
     private UUID idDepartement;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, length = 50)
     @NotBlank(message = "Le nom du département est obligatoire")
     @Size(min = 2, max = 50, message = "Le nom doit contenir entre 2 et 50 caractères")
     private String nomDepartement;
 
-    @OneToMany(mappedBy = "departement", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "departement", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private List<Produit> produits;
 }
