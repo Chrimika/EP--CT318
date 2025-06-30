@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import jakarta.validation.constraints.*;
 import lombok.*;
+import java.util.UUID;
 
 @Data
 @Builder
