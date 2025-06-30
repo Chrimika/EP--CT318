@@ -15,7 +15,7 @@ import java.util.UUID;
 public class Produit {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID idProduit;
 
     @Column(nullable = false)
@@ -32,12 +32,22 @@ public class Produit {
     private LocalDate dateExpiration;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", referencedColumnName = "id_category")
     @NotNull(message = "La catégorie est obligatoire")
     private Category category;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "departement_id")
+    @JoinColumn(name = "departement_id", referencedColumnName = "id_departement")
     @NotNull(message = "Le département est obligatoire")
     private Departement departement;
+
+    // Méthode helper pour accéder à l'ID de la catégorie
+    public UUID getCategoryId() {
+        return this.category != null ? this.category.getIdCategory() : null;
+    }
+
+    // Méthode helper pour accéder à l'ID du département
+    public UUID getDepartementId() {
+        return this.departement != null ? this.departement.getIdDepartement() : null;
+    }
 }
