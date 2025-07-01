@@ -1,10 +1,588 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="fr">
 <head>
-    <title>Page d'accueil</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Produits & Catégories</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .date-info {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 50px;
+            padding: 5px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 400px;
+            margin: 0 auto 30px;
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px 25px;
+            text-align: center;
+            border-radius: 45px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #666;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #feca57, #ff9ff3);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 202, 87, 0.4);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th,
+        .table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 600;
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                max-width: 300px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenue dans l'application de gestion des produits</h1>
-    <p th:text="|Aujourd'hui, nous sommes le ${#dates.format(#dates.createNow(), 'dd/MM/yyyy')}|"></p>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-shopping-cart"></i> Gestion des Produits</h1>
+        <p class="date-info">
+            <i class="fas fa-calendar-alt"></i>
+            Aujourd'hui, nous sommes le <span id="currentDate"></span>
+        </p>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" onclick="showSection('categories')">
+            <i class="fas fa-tags"></i> Catégories
+        </div>
+        <div class="nav-tab" onclick="showSection('products')">
+            <i class="fas fa-box"></i> Produits
+        </div>
+    </div>
+
+    <!-- Section Catégories -->
+    <div id="categories" class="content-section active">
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fas fa-plus-circle"></i> Ajouter une Catégorie</h2>
+                <form id="categoryForm">
+                    <div class="form-group">
+                        <label for="categoryName">Nom de la catégorie</label>
+                        <input type="text" id="categoryName" class="form-control" placeholder="Ex: Électronique, Vêtements..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">Description</label>
+                        <textarea id="categoryDescription" class="form-control" rows="3" placeholder="Description de la catégorie"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-list"></i> Liste des Catégories</h2>
+                <div id="categoriesList">
+                    <div class="empty-state">
+                        <i class="fas fa-tags"></i>
+                        <p>Aucune catégorie enregistrée</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Produits -->
+    <div id="products" class="content-section">
+        <div class="grid">
+            <div class="card">
+                <h2><i class="fas fa-plus-circle"></i> Ajouter un Produit</h2>
+                <form id="productForm">
+                    <div class="form-group">
+                        <label for="productName">Nom du produit</label>
+                        <input type="text" id="productName" class="form-control" placeholder="Ex: iPhone 15, T-shirt..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productCategory">Catégorie</label>
+                        <select id="productCategory" class="form-control" required>
+                            <option value="">Sélectionner une catégorie</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="productPrice">Prix (€)</label>
+                        <input type="number" id="productPrice" class="form-control" placeholder="0.00" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productStock">Stock</label>
+                        <input type="number" id="productStock" class="form-control" placeholder="0" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="productDescription">Description</label>
+                        <textarea id="productDescription" class="form-control" rows="3" placeholder="Description du produit"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Enregistrer
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-box-open"></i> Liste des Produits</h2>
+                <div id="productsList">
+                    <div class="empty-state">
+                        <i class="fas fa-box"></i>
+                        <p>Aucun produit enregistré</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Données en mémoire
+    let categories = [];
+    let products = [];
+    let editingCategory = null;
+    let editingProduct = null;
+
+    // Afficher la date actuelle
+    document.getElementById('currentDate').textContent = new Date().toLocaleDateString('fr-FR');
+
+    // Navigation entre les sections
+    function showSection(sectionName) {
+        // Masquer toutes les sections
+        document.querySelectorAll('.content-section').forEach(section => {
+            section.classList.remove('active');
+        });
+
+        // Désactiver tous les onglets
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+
+        // Afficher la section sélectionnée
+        document.getElementById(sectionName).classList.add('active');
+
+        // Activer l'onglet correspondant
+        event.target.classList.add('active');
+    }
+
+    // Gestion des catégories
+    document.getElementById('categoryForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('categoryName').value;
+        const description = document.getElementById('categoryDescription').value;
+
+        if (editingCategory !== null) {
+            // Modifier
+            categories[editingCategory] = { id: categories[editingCategory].id, name, description };
+            editingCategory = null;
+            document.querySelector('#categoryForm button').innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+        } else {
+            // Ajouter
+            const newCategory = {
+                id: Date.now(),
+                name,
+                description
+            };
+            categories.push(newCategory);
+        }
+
+        this.reset();
+        renderCategories();
+        updateProductCategoryOptions();
+    });
+
+    function renderCategories() {
+        const container = document.getElementById('categoriesList');
+
+        if (categories.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-tags"></i>
+                    <p>Aucune catégorie enregistrée</p>
+                </div>
+            `;
+            return;
+        }
+
+        const html = `
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${categories.map((category, index) => `
+                        <tr>
+                            <td><strong>${category.name}</strong></td>
+                            <td>${category.description || 'Aucune description'}</td>
+                            <td class="actions">
+                                <button class="btn btn-warning" onclick="editCategory(${index})">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </button>
+                                <button class="btn btn-danger" onclick="deleteCategory(${index})">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    function editCategory(index) {
+        const category = categories[index];
+        document.getElementById('categoryName').value = category.name;
+        document.getElementById('categoryDescription').value = category.description;
+        editingCategory = index;
+        document.querySelector('#categoryForm button').innerHTML = '<i class="fas fa-save"></i> Modifier';
+    }
+
+    function deleteCategory(index) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?')) {
+            const categoryId = categories[index].id;
+            categories.splice(index, 1);
+
+            // Supprimer les produits de cette catégorie
+            products = products.filter(product => product.categoryId !== categoryId);
+
+            renderCategories();
+            renderProducts();
+            updateProductCategoryOptions();
+        }
+    }
+
+    // Gestion des produits
+    document.getElementById('productForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById('productName').value;
+        const categoryId = parseInt(document.getElementById('productCategory').value);
+        const price = parseFloat(document.getElementById('productPrice').value);
+        const stock = parseInt(document.getElementById('productStock').value);
+        const description = document.getElementById('productDescription').value;
+
+        if (editingProduct !== null) {
+            // Modifier
+            products[editingProduct] = {
+                id: products[editingProduct].id,
+                name,
+                categoryId,
+                price,
+                stock,
+                description
+            };
+            editingProduct = null;
+            document.querySelector('#productForm button').innerHTML = '<i class="fas fa-save"></i> Enregistrer';
+        } else {
+            // Ajouter
+            const newProduct = {
+                id: Date.now(),
+                name,
+                categoryId,
+                price,
+                stock,
+                description
+            };
+            products.push(newProduct);
+        }
+
+        this.reset();
+        renderProducts();
+    });
+
+    function renderProducts() {
+        const container = document.getElementById('productsList');
+
+        if (products.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-box"></i>
+                    <p>Aucun produit enregistré</p>
+                </div>
+            `;
+            return;
+        }
+
+        const html = `
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th>Catégorie</th>
+                        <th>Prix</th>
+                        <th>Stock</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${products.map((product, index) => {
+                        const category = categories.find(cat => cat.id === product.categoryId);
+                        return `
+                            <tr>
+                                <td><strong>${product.name}</strong></td>
+                                <td>${category ? category.name : 'Catégorie supprimée'}</td>
+                                <td>${product.price.toFixed(2)} €</td>
+                                <td>${product.stock}</td>
+                                <td class="actions">
+                                    <button class="btn btn-warning" onclick="editProduct(${index})">
+                                        <i class="fas fa-edit"></i> Modifier
+                                    </button>
+                                    <button class="btn btn-danger" onclick="deleteProduct(${index})">
+                                        <i class="fas fa-trash"></i> Supprimer
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                    }).join('')}
+                </tbody>
+            </table>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    function editProduct(index) {
+        const product = products[index];
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productCategory').value = product.categoryId;
+        document.getElementById('productPrice').value = product.price;
+        document.getElementById('productStock').value = product.stock;
+        document.getElementById('productDescription').value = product.description;
+        editingProduct = index;
+        document.querySelector('#productForm button').innerHTML = '<i class="fas fa-save"></i> Modifier';
+    }
+
+    function deleteProduct(index) {
+        if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
+            products.splice(index, 1);
+            renderProducts();
+        }
+    }
+
+    function updateProductCategoryOptions() {
+        const select = document.getElementById('productCategory');
+        select.innerHTML = '<option value="">Sélectionner une catégorie</option>';
+
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            select.appendChild(option);
+        });
+    }
+
+    // Initialisation
+    renderCategories();
+    renderProducts();
+    updateProductCategoryOptions();
+</script>
 </body>
 </html>
